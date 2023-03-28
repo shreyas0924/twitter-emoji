@@ -12,17 +12,17 @@ const server = z.object({
   //     ? z.string().min(1)
   //     : z.string().min(1).optional(),
   // NEXTAUTH_URL: z.preprocess(
-<<<<<<< HEAD
+
   //   // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
   //   // Since NextAuth.js automatically uses the VERCEL_URL if present.
   //   (str) => process.env.VERCEL_URL ?? str,
   //   // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-=======
+
   // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
   // Since NextAuth.js automatically uses the VERCEL_URL if present.
   // (str) => process.env.VERCEL_URL ?? str,
   // VERCEL_URL doesn't include `https` so it cant be validated as a URL
->>>>>>> c670b98f94a651b200887f461a4bdb6a5a9b7077
+
   //   process.env.VERCEL ? z.string().min(1) : z.string().url(),
   // ),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
