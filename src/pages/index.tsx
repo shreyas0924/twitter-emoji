@@ -3,26 +3,40 @@ import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import { api } from "~/utils/api";
-import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { RouterOutputs, api } from "~/utils/api";
+import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 
 const CreatePost = () => {
   const { user } = useUser();
   if (!user) return null;
   return (
-    <div className="flex">
+    <div className="flex w-[90%] gap-4">
       <img
         src={user?.profileImageUrl}
         alt="Profile pic"
-        className="h-48 w-48 rounded-full"
+        className="h-14 w-14 rounded-full"
       />
+      <input
+        placeholder="Type some emojis"
+        className=" mr-3 grow bg-transparent outline-none"
+      />
+    </div>
+  );
+};
+
+type PostWithUser = RouterOutputs["posts"]["getAll"][number];
+const PostView = (props: PostWithUser) => {
+  const { post, author } = props;
+  return (
+    <div className="border-b border-slate-400 p-8 " key={post.id}>
+      {post.content}
     </div>
   );
 };
 
 const Home: NextPage = () => {
   const user = useUser();
-
+  console.log(user);
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
   const { data, isLoading } = api.posts.getAll.useQuery();
@@ -51,10 +65,8 @@ const Home: NextPage = () => {
             {!!user.isSignedIn && <SignOutButton />}
           </div>
           <div className="flex flex-col">
-            {data?.map((post) => (
-              <div className="border-b border-slate-400 p-8 " key={post.id}>
-                {post.content}
-              </div>
+            {[...data]?.map((fullPost) => (
+              <PostView {...fullPost} key={fullPost.post.id} />
             ))}
           </div>
         </div>
