@@ -11,6 +11,8 @@ const Home: NextPage = () => {
 
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
+  const { data } = api.posts.getAll.useQuery();
+
   return (
     <>
       <Head>
@@ -24,6 +26,11 @@ const Home: NextPage = () => {
           {!!user.isSignedIn && <SignOutButton />}
         </div>
         <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
+        <div>
+          {data?.map((post) => (
+            <div key={post.id}>{post.content}</div>
+          ))}
+        </div>
       </main>
     </>
   );
@@ -31,6 +38,8 @@ const Home: NextPage = () => {
 
 export default Home;
 
+
+////AUTH 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
