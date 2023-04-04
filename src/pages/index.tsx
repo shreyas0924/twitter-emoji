@@ -46,7 +46,7 @@ const CreatePost = () => {
         disabled={isPosting}
       />
 
-      <button onClick={() => mutate({ content: input })}>Post</button>
+      <button className="mr-4 cursor-pointer" onClick={() => mutate({ content: input })}>Post</button>
     </div>
   );
 };
