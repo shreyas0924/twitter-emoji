@@ -7,6 +7,8 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+
+  //since images are passed through clerk provider we have to give the domain name
   images: {
     domains: ["images.clerk.dev"],
   },

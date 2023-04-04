@@ -9,6 +9,7 @@ import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
+import { Loading } from "~/components/Loading";
 
 dayjs.extend(relativeTime);
 
@@ -64,7 +65,7 @@ const Home: NextPage = () => {
 
   const { data, isLoading } = api.posts.getAll.useQuery();
   if (isLoading) {
-    return <div>Loading..</div>;
+    return <Loading />;
   }
   if (!data) {
     return <div>Something went wrong</div>;
