@@ -33,6 +33,7 @@ const CreatePost = () => {
   );
 };
 
+//PostView - Structure of the post
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
@@ -52,15 +53,16 @@ const PostView = (props: PostWithUser) => {
             post.createdAt
           ).fromNow()}`}</span>
         </div>
-        <span>{post.content}</span>
+        <span className="text-2xl">{post.content}</span>
       </div>
     </div>
   );
 };
 
+//Feed Component
 const Feed = () => {
-  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
-  if (postsLoading) return <Loading />;
+  const { data, isLoading } = api.posts.getAll.useQuery();
+  if (isLoading) return <Loading />;
   if (!data) return <div>Something is wrong</div>;
   return (
     <div className="flex flex-col">
@@ -72,12 +74,12 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
 
   //start fetching data early
   api.posts.getAll.useQuery();
 
-  if (!userLoaded) return <div />;
+  if (!isLoaded) return <div />;
 
   return (
     <>
