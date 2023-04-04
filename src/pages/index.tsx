@@ -58,18 +58,27 @@ const PostView = (props: PostWithUser) => {
   );
 };
 
-const Home: NextPage = () => {
-  const user = useUser();
-  console.log(user);
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+const Feed = () => {
+  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
+  if (postsLoading) return <Loading />;
+  if (!data) return <div>Something is wrong</div>;
+  return (
+    <div className="flex flex-col">
+      {[...data]?.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />
+      ))}
+    </div>
+  );
+};
 
-  const { data, isLoading } = api.posts.getAll.useQuery();
-  if (isLoading) {
-    return <Loading />;
-  }
-  if (!data) {
-    return <div>Something went wrong</div>;
-  }
+const Home: NextPage = () => {
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
+
+  //start fetching data early
+  api.posts.getAll.useQuery();
+
+  if (!userLoaded) return <div />;
+
   return (
     <>
       <Head>
@@ -80,19 +89,15 @@ const Home: NextPage = () => {
       <main className="flex justify-center">
         <div className="h-screen w-full border-x border-slate-400 md:max-w-2xl">
           <div className="flex border-b border-slate-400 p-4 ">
-            {!user.isSignedIn && (
+            {!isSignedIn && (
               <div className="flex justify-center">
                 <SignInButton />
               </div>
             )}
-            {!!user.isSignedIn && <CreatePost />}
-            {!!user.isSignedIn && <SignOutButton />}
+            {isSignedIn && <CreatePost />}
+            {isSignedIn && <SignOutButton />}
           </div>
-          <div className="flex flex-col">
-            {[...data]?.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>
