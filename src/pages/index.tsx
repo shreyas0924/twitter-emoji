@@ -11,6 +11,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { Loading } from "~/components/Loading";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -24,13 +25,14 @@ const CreatePost = () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
     },
+    onError: () => toast.error("Failed to post! Please try again"),
   });
 
   const [input, setInput] = useState<string>("");
 
   if (!user) return null;
   return (
-    <div className="flex w-[90%] gap-4">
+    <div className="flex w-full gap-4">
       <Image
         src={user?.profileImageUrl}
         alt="Profile pic"
@@ -46,7 +48,12 @@ const CreatePost = () => {
         disabled={isPosting}
       />
 
-      <button className="mr-4 cursor-pointer" onClick={() => mutate({ content: input })}>Post</button>
+      <button
+        className="mr-2 cursor-pointer"
+        onClick={() => mutate({ content: input })}
+      >
+        Post
+      </button>
     </div>
   );
 };
@@ -108,6 +115,14 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex justify-center">
         <div className="h-screen w-full border-x border-slate-400 md:max-w-2xl">
+          {isSignedIn && (
+            <div className="flex">
+              <div className="ml-5 text-lg">Home</div>
+              <div className="ml-auto mr-5 text-right text-lg">
+                {isSignedIn && <SignOutButton />}
+              </div>
+            </div>
+          )}
           <div className="flex border-b border-slate-400 p-4 ">
             {!isSignedIn && (
               <div className="flex justify-center">
@@ -115,7 +130,6 @@ const Home: NextPage = () => {
               </div>
             )}
             {isSignedIn && <CreatePost />}
-            {isSignedIn && <SignOutButton />}
           </div>
           <Feed />
         </div>
