@@ -9,7 +9,7 @@ import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
-import { Loading } from "~/components/Loading";
+import { Loading, LoadingPage } from "~/components/Loading";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -25,7 +25,14 @@ const CreatePost = () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
     },
-    onError: () => toast.error("Failed to post! Please try again"),
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post! Please try again");
+      }
+    },
   });
 
   const [input, setInput] = useState<string>("");
@@ -46,14 +53,29 @@ const CreatePost = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         disabled={isPosting}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (input !== "") {
+              mutate({ content: input });
+            }
+            setInput("");
+          }
+        }}
       />
-
-      <button
-        className="mr-2 cursor-pointer"
-        onClick={() => mutate({ content: input })}
-      >
-        Post
-      </button>
+      {input !== "" && !isPosting && (
+        <button
+          className="mr-2 cursor-pointer"
+          onClick={() => mutate({ content: input })}
+        >
+          Post
+        </button>
+      )}
+      {isPosting && (
+        <div className="mr-2 flex items-center justify-center">
+          <Loading size={30} />
+        </div>
+      )}
     </div>
   );
 };
@@ -87,7 +109,7 @@ const PostView = (props: PostWithUser) => {
 //Feed Component
 const Feed = () => {
   const { data, isLoading } = api.posts.getAll.useQuery();
-  if (isLoading) return <Loading />;
+  if (isLoading) return <LoadingPage />;
   if (!data) return <div>Something is wrong</div>;
   return (
     <div className="flex flex-col">
@@ -116,7 +138,7 @@ const Home: NextPage = () => {
       <main className="flex justify-center">
         <div className="h-screen w-full border-x border-slate-400 md:max-w-2xl">
           {isSignedIn && (
-            <div className="flex">
+            <div className="mt-3 mb-3 flex">
               <div className="ml-5 text-lg">Home</div>
               <div className="ml-auto mr-5 text-right text-lg">
                 {isSignedIn && <SignOutButton />}
