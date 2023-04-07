@@ -1,5 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { User } from "@clerk/nextjs/dist/api";
+import type { User } from "@clerk/nextjs/dist/api";
 import { z } from "zod";
 
 import {
@@ -84,13 +84,16 @@ export const postsRouter = createTRPCRouter({
   getPostsByUserId: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(({ ctx, input }) => {
-      ctx.prisma.post.findMany({
-        where: {
-          authorId: input.userId,
-        },
-        take: 100,
-        orderBy: { createdAt: "desc" },
-      }).then(addUserDataToPost)
+      ctx.prisma.post
+        .findMany({
+          where: {
+            authorId: input.userId,
+          },
+          take: 100,
+          orderBy: { createdAt: "desc" },
+        })
+        .then(void addUserDataToPost)
+        .catch((error) => console.log(error));
     }),
 
   //Post procedure
