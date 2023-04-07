@@ -81,20 +81,25 @@ export const postsRouter = createTRPCRouter({
     return "you can now see this secret message!";
   }),
 
+ 
+
   getPostsByUserId: publicProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(({ ctx, input }) => {
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(({ ctx, input }) =>
       ctx.prisma.post
         .findMany({
           where: {
             authorId: input.userId,
           },
           take: 100,
-          orderBy: { createdAt: "desc" },
+          orderBy: [{ createdAt: "desc" }],
         })
-        .then(void addUserDataToPost)
-        .catch((error) => console.log(error));
-    }),
+        .then(addUserDataToPost)
+    ),
 
   //Post procedure
   create: privateProcedure

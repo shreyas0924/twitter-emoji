@@ -6,7 +6,9 @@ import { PageLayout } from "~/components/layout";
 
 import { Feed } from "~/components/Feed";
 import { CreatePost } from "~/components/CreatePost";
-
+import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
+dayjs.extend(relativeTime);
 const Home: NextPage = () => {
   const { isLoaded, isSignedIn } = useUser();
 

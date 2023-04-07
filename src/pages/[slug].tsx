@@ -6,6 +6,7 @@ import { LoadingPage } from "~/components/Loading";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
+import { PostView } from "~/components/PostView";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
@@ -16,9 +17,9 @@ const ProfileFeed = (props: { userId: string }) => {
   if (!data) return <div>User Not posted</div>;
   return (
     <div className="flex flex-col">
-      {/* {data.map((fullPost:any) => (
+      {data.map((fullPost) => (
         <PostView {...fullPost} key={fullPost.post.id} />
-      ))} */}
+      ))}
     </div>
   );
 };
@@ -48,7 +49,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           />
         </div>
         <div className="h-[64px]"></div>
-        <div className="p-4 text-2xl font-bold">{`@${data.username ?? ""}`}</div>
+        <div className="p-4 text-2xl font-bold">{`@${
+          data.username ?? ""
+        }`}</div>
         <div className="w-full border-b border-slate-400" />
         <ProfileFeed userId={data.id} />
       </PageLayout>
