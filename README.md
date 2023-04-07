@@ -16,4 +16,4 @@ Deployed this on [Vercel](https://vercel.com/)
 
 ## Checkout the Project 😁😁
 
-[Emoji-Twitter](twitter-emoji-eight.vercel.app)
+[Emoji-Twitter](https://twitter-emoji-eight.vercel.app)
