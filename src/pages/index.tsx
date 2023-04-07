@@ -1,129 +1,14 @@
 import { type NextPage } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
-
-import { RouterOutputs, api } from "~/utils/api";
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { api } from "~/utils/api";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { Loading, LoadingPage } from "~/components/Loading";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/layout";
-
-dayjs.extend(relativeTime);
-
-const CreatePost = () => {
-  const { user } = useUser();
-
-  const ctx = api.useContext();
-
-  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
-    onSuccess: () => {
-      setInput("");
-      void ctx.posts.getAll.invalidate();
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.content;
-      if (errorMessage && errorMessage[0]) {
-        toast.error(errorMessage[0]);
-      } else {
-        toast.error("Failed to post! Please try again");
-      }
-    },
-  });
-
-  const [input, setInput] = useState<string>("");
-
-  if (!user) return null;
-  return (
-    <div className="flex w-full gap-4">
-      <Image
-        src={user?.profileImageUrl}
-        alt="Profile pic"
-        className="h-12 w-12 rounded-full"
-        width={56}
-        height={56}
-      />
-      <input
-        placeholder="Type some emojis"
-        className=" mr-3 grow bg-transparent outline-none"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        disabled={isPosting}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            if (input !== "") {
-              mutate({ content: input });
-            }
-            setInput("");
-          }
-        }}
-      />
-      {input !== "" && !isPosting && (
-        <button
-          className="mr-2 cursor-pointer"
-          onClick={() => mutate({ content: input })}
-        >
-          Post
-        </button>
-      )}
-      {isPosting && (
-        <div className="mr-2 flex items-center justify-center">
-          <Loading size={30} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-//PostView - Structure of the post
-type PostWithUser = RouterOutputs["posts"]["getAll"][number];
-const PostView = (props: PostWithUser) => {
-  const { post, author } = props;
-  return (
-    <div className="flex gap-3 border-b border-slate-400 p-4" key={post.id}>
-      <Image
-        src={author.profile}
-        className="h-12 w-12 rounded-full"
-        alt={"Profile image"}
-        width={56}
-        height={56}
-      />
-      <div className="flex flex-col ">
-        <div className="flex gap-1 font-bold text-slate-300">
-          <Link href={`/@${author.username}`}>
-            <span>{`@${author.username}`}</span>
-          </Link>
-          <Link href={`/post/${post.id}`}>
-            <span className="font-thin">{` · ${dayjs(
-              post.createdAt
-            ).fromNow()}`}</span>
-          </Link>
-        </div>
-        <span className="text-2xl">{post.content}</span>
-      </div>
-    </div>
-  );
-};
-
-//Feed Component
-const Feed = () => {
-  const { data, isLoading } = api.posts.getAll.useQuery();
-  if (isLoading) return <LoadingPage />;
-  if (!data) return <div>Something is wrong</div>;
-  return (
-    <div className="flex flex-col">
-      {data.map((fullPost) => (
-        <PostView {...fullPost} key={fullPost.post.id} />
-      ))}
-    </div>
-  );
-};
+import { PostView } from "~/components/PostView";
+import { Feed } from "~/components/Feed";
+import { CreatePost } from "~/components/CreatePost";
 
 const Home: NextPage = () => {
   const { isLoaded, isSignedIn } = useUser();

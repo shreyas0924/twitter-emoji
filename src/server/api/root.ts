@@ -9,6 +9,7 @@ export const appRouter = createTRPCRouter({
   example: exampleRouter,
   posts: postsRouter,
   profile: profileRouter,
+  
 });
 
 // export type definition of API
