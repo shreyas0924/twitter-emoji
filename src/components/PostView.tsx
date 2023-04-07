@@ -1,9 +1,10 @@
-
 import Image from "next/image";
 import Link from "next/link";
-import type { RouterOutputs} from "~/utils/api";
-import dayjs from "dayjs";
+import type { RouterOutputs } from "~/utils/api";
 
+import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
+dayjs.extend(relativeTime);
 //PostView - Structure of the post
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 export const PostView = (props: PostWithUser) => {
