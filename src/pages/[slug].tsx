@@ -43,13 +43,13 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           <Image
             src={data.profile}
             className=" absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black bg-black"
-            alt={`${data.username} 's profile pic`}
+            alt={`${data.username} s profile pic`}
             width={128}
             height={128}
           />
         </div>
         <div className="h-[64px]"></div>
-        <div className="p-4 text-xl font-bold">{`@${data.username}`}</div>
+        <div className="p-4 text-xl font-bold">{`@ ${data.username}`}</div>
         <div className="w-full border-b border-slate-400">
           <ProfileFeed userId={data.id} />
         </div>
