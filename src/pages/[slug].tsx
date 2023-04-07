@@ -1,13 +1,12 @@
-import { GetStaticProps, InferGetStaticPropsType, type NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+
 import { api } from "~/utils/api";
 import { LoadingPage } from "~/components/Loading";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { PageLayout } from "~/components/layout";
 import Image from "next/image";
-import { PostView } from "~/components/PostView";
+
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
